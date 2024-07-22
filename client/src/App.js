@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider, styled } from 'styled-components';
+import Navbar from './components/Navbar';
 import Auth from './pages/Auth';
 import { lightTheme } from './utils/themes';
 
@@ -16,12 +18,20 @@ const Container = styled.div`
 `;
 
 function App() {
+  const [user, setUser] = useState(true);
+
   return (
     <ThemeProvider theme={lightTheme}>
       <BrowserRouter>
-        <Container>
-          <Auth />
-        </Container>
+        {user ? (
+          <Container>
+            <Navbar />
+          </Container>
+        ) : (
+          <Container>
+            <Auth />
+          </Container>
+        )}
       </BrowserRouter>
     </ThemeProvider>
   );

@@ -85,7 +85,7 @@ const Desc = styled.div`
   }
 `;
 
-const CountsCard = ({ item }) => {
+const Counts = ({ item }) => {
   return (
     <Card>
       <Data>
@@ -102,4 +102,4 @@ const CountsCard = ({ item }) => {
   );
 };
 
-export default CountsCard;
+export default Counts;

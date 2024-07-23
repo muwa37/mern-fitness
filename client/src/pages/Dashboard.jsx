@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import CountsCard from '../components/cards/CountsCard';
+import Counts from '../components/cards/Counts';
+import WeeklyStat from '../components/cards/WeeklyStat';
 import { counts } from '../utils/data';
 
 const Container = styled.div`
@@ -48,8 +49,11 @@ const Dashboard = () => {
         <Title>Dashboard</Title>
         <FlexWrap>
           {counts.map(item => (
-            <CountsCard item={item} />
+            <Counts item={item} />
           ))}
+        </FlexWrap>
+        <FlexWrap>
+          <WeeklyStat />
         </FlexWrap>
       </Wrapper>
     </Container>

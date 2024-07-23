@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, styled } from 'styled-components';
 import Navbar from './components/Navbar';
 import Auth from './pages/Auth';
+import Dashboard from './pages/Dashboard';
+import Workouts from './pages/Workouts';
 import { lightTheme } from './utils/themes';
 
 const Container = styled.div`
@@ -26,6 +28,10 @@ function App() {
         {user ? (
           <Container>
             <Navbar />
+            <Routes>
+              <Route path='/' exact element={<Dashboard />} />
+              <Route path='/workouts' exact element={<Workouts />} />
+            </Routes>
           </Container>
         ) : (
           <Container>

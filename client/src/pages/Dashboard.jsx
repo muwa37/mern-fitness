@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import CategoryChart from '../components/cards/CategoryChart';
 import Counts from '../components/cards/Counts';
 import WeeklyStat from '../components/cards/WeeklyStat';
+import WorkoutWidget from '../components/WorkoutWidget';
 import { counts } from '../utils/data';
 
 const Container = styled.div`
@@ -54,6 +56,8 @@ const Dashboard = () => {
         </FlexWrap>
         <FlexWrap>
           <WeeklyStat />
+          <CategoryChart />
+          <WorkoutWidget />
         </FlexWrap>
       </Wrapper>
     </Container>

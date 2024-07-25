@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import CategoryChart from '../components/cards/CategoryChart';
 import Counts from '../components/cards/Counts';
 import WeeklyStat from '../components/cards/WeeklyStat';
+import Workout from '../components/cards/Workout';
 import WorkoutWidget from '../components/WorkoutWidget';
 import { counts } from '../utils/data';
 
@@ -44,7 +45,32 @@ const FlexWrap = styled.div`
   }
 `;
 
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0px 16px;
+  gap: 22px;
+  padding: 0px 16px;
+  @media (max-width: 600px) {
+    gap: 12px;
+  }
+`;
+
+const CardWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 100px;
+  @media (max-width: 600px) {
+    gap: 12px;
+  }
+`;
+
 const Dashboard = () => {
+  const [workout, setWorkout] = useState('');
+  const [todaysWorkouts, setTodaysWorkouts] = useState([]);
+
   return (
     <Container>
       <Wrapper>
@@ -57,8 +83,17 @@ const Dashboard = () => {
         <FlexWrap>
           <WeeklyStat />
           <CategoryChart />
-          <WorkoutWidget />
+          <WorkoutWidget workout={workout} setWorkout={setWorkout} />
         </FlexWrap>
+
+        <Section>
+          <Title>Todays Workouts</Title>
+          <CardWrapper>
+            {todaysWorkouts.map(workout => (
+              <Workout workout={workout} />
+            ))}
+          </CardWrapper>
+        </Section>
       </Wrapper>
     </Container>
   );

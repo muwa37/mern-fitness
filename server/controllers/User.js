@@ -6,7 +6,7 @@ import User from '../models/User.js';
 
 dotenv.config();
 
-export const UserRegister = async () => {
+export const UserRegister = async (req, res, next) => {
   try {
     const { email, password, name, img } = req.body;
 

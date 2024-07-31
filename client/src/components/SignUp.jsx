@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { UserSignUp } from '../api';
+import { loginSuccess } from '../redux/reducers/userSlice';
 import Button from './Button';
 import TextInput from './TextInput';
 
@@ -30,9 +33,39 @@ const FormContainer = styled.div`
 `;
 
 const SignUp = () => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+
+  const validateInputs = () => {
+    if (!name || !email || !password) {
+      alert('Please fill in all fields');
+      return false;
+    }
+    return true;
+  };
+
+  const signUpHandler = async () => {
+    setLoading(true);
+    setIsButtonDisabled(true);
+    if (validateInputs()) {
+      await UserSignUp({ name, email, password })
+        .then(res => {
+          dispatch(loginSuccess(res.data));
+          alert('Account Created Success');
+          setLoading(false);
+          setIsButtonDisabled(false);
+        })
+        .catch(err => {
+          alert(err.response.data.message);
+          setLoading(false);
+          setIsButtonDisabled(false);
+        });
+    }
+  };
 
   return (
     <Container>
@@ -60,7 +93,12 @@ const SignUp = () => {
           password
           handelChange={e => setPassword(e.target.value)}
         />
-        <Button text='Sign In' />
+        <Button
+          text='Sign In'
+          onClick={signUpHandler}
+          isLoading={loading}
+          isDisabled={isButtonDisabled}
+        />
       </FormContainer>
     </Container>
   );

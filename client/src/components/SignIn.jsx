@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { UserSignIn } from '../api';
+import { loginSuccess } from '../store/reducers/userSlice';
 import Button from './Button';
 import TextInput from './TextInput';
 
@@ -30,8 +33,38 @@ const FormContainer = styled.div`
 `;
 
 const SignIn = () => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const validateInputs = () => {
+    if (!email || !password) {
+      alert('please fill in all fields');
+      return false;
+    }
+    return true;
+  };
+
+  const signInHandler = async () => {
+    setLoading(true);
+    setIsButtonDisabled(true);
+    if (validateInputs()) {
+      await UserSignIn({ email, password })
+        .then(res => {
+          dispatch(loginSuccess(res.data));
+          alert('Login Success');
+          setLoading(false);
+          setIsButtonDisabled(false);
+        })
+        .catch(err => {
+          alert(err.response.data.message);
+          setLoading(false);
+          setIsButtonDisabled(false);
+        });
+    }
+  };
 
   return (
     <Container>
@@ -42,18 +75,23 @@ const SignIn = () => {
       <FormContainer>
         <TextInput
           label='Email'
-          placeholder='please enter your email'
+          placeholder='please enter email'
           value={email}
           handelChange={e => setEmail(e.target.value)}
         />
         <TextInput
           label='Password'
-          placeholder='please enter your password'
+          placeholder='please enter password'
           value={password}
           password
           handelChange={e => setPassword(e.target.value)}
         />
-        <Button text='Sign In' />
+        <Button
+          text='Sign In'
+          onClick={signInHandler}
+          isLoading={loading}
+          isDisabled={isButtonDisabled}
+        />
       </FormContainer>
     </Container>
   );

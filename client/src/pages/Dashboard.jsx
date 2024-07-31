@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { addWorkout, getDashboardDetails, getWorkouts } from '../api';
 import CategoryChart from '../components/cards/CategoryChart';
 import Counts from '../components/cards/Counts';
 import WeeklyStat from '../components/cards/WeeklyStat';
@@ -68,8 +69,49 @@ const CardWrapper = styled.div`
 `;
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState();
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [workout, setWorkout] = useState('');
   const [todaysWorkouts, setTodaysWorkouts] = useState([]);
+
+  const getDashboardData = async () => {
+    setIsLoading(true);
+    const token = localStorage.getItem('fittrack-app-token');
+    await getDashboardDetails(token).then(res => {
+      setData(res.data);
+      setIsLoading(false);
+    });
+  };
+
+  const getTodaysWorkout = async () => {
+    setIsLoading(true);
+    const token = localStorage.getItem('fittrack-app-token');
+    await getWorkouts(token, '').then(res => {
+      setTodaysWorkouts(res?.data?.todaysWorkouts);
+      console.log(res.data);
+      setIsLoading(false);
+    });
+  };
+
+  const addNewWorkout = async () => {
+    setButtonLoading(true);
+    const token = localStorage.getItem('fittrack-app-token');
+    await addWorkout(token, { workoutString: workout })
+      .then(res => {
+        getDashboardData();
+        getTodaysWorkout();
+        setButtonLoading(false);
+      })
+      .catch(err => {
+        alert(err);
+      });
+  };
+
+  useEffect(() => {
+    getDashboardData();
+    getTodaysWorkout();
+  }, []);
 
   return (
     <Container>
@@ -81,9 +123,14 @@ const Dashboard = () => {
           ))}
         </FlexWrap>
         <FlexWrap>
-          <WeeklyStat />
-          <CategoryChart />
-          <WorkoutWidget workout={workout} setWorkout={setWorkout} />
+          <WeeklyStat data={data} />
+          <CategoryChart data={data} />
+          <WorkoutWidget
+            workout={workout}
+            setWorkout={setWorkout}
+            addNewWorkout={addNewWorkout}
+            buttonLoading={buttonLoading}
+          />
         </FlexWrap>
 
         <Section>

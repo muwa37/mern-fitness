@@ -1,8 +1,11 @@
+import { CircularProgress } from '@mui/material';
 import { DateCalendar } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { getWorkouts } from '../api';
 import Workout from '../components/cards/Workout';
 
 const Container = styled.div`
@@ -77,8 +80,24 @@ const SectionTitle = styled.div`
 `;
 
 const Workouts = () => {
-  const [date, setDate] = useState('');
+  const dispatch = useDispatch();
   const [todaysWorkouts, setTodaysWorkouts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [date, setDate] = useState('');
+
+  const getTodaysWorkout = async () => {
+    setIsLoading(true);
+    const token = localStorage.getItem('fittrack-app-token');
+    await getWorkouts(token, date ? `?date=${date}` : '').then(res => {
+      setTodaysWorkouts(res?.data?.todaysWorkouts);
+      console.log(res.data);
+      setIsLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    getTodaysWorkout();
+  }, [date]);
 
   return (
     <Container>
@@ -94,12 +113,15 @@ const Workouts = () => {
         <Right>
           <Section>
             <SectionTitle>Todays Workout</SectionTitle>
-
-            <CardWrapper>
-              {todaysWorkouts.map(workout => (
-                <Workout workout={workout} />
-              ))}
-            </CardWrapper>
+            {isLoading ? (
+              <CircularProgress />
+            ) : (
+              <CardWrapper>
+                {todaysWorkouts.map(workout => (
+                  <Workout workout={workout} />
+                ))}
+              </CardWrapper>
+            )}
           </Section>
         </Right>
       </Wrapper>
